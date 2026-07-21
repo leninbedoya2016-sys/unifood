@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>UniFood – Come bien, gasta menos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --g50:#f0fdf4;--g100:#dcfce7;--g200:#bbf7d0;--g400:#4ade80;--g500:#22c55e;--g600:#16a34a;--g700:#15803d;--g800:#166534;
+  --o50:#fff7ed;--o100:#ffedd5;--o300:#fdba74;--o400:#fb923c;--o500:#f97316;--o600:#ea580c;
+  --b50:#eff6ff;--b500:#3b82f6;--b600:#2563eb;
+  --slate50:#f8fafc;--slate100:#f1f5f9;--slate200:#e2e8f0;--slate300:#cbd5e1;--slate400:#94a3b8;--slate500:#64748b;--slate600:#475569;--slate700:#334155;--slate800:#1e293b;--slate900:#0f172a;
+  --white:#fff;
+  --r-sm:10px;--r-md:14px;--r-lg:20px;--r-xl:26px;--r-full:999px;
+  --sh-xs:0 1px 2px rgba(0,0,0,.05);
+  --sh-sm:0 2px 8px rgba(0,0,0,.07);
+  --sh-md:0 4px 20px rgba(0,0,0,.10);
+  --sh-lg:0 8px 40px rgba(0,0,0,.13);
+  --sh-xl:0 20px 60px rgba(0,0,0,.18);
+  --nav-h:66px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{font-family:'Inter',sans-serif;background:#f0f2f5;color:var(--slate800);max-width:430px;margin:0 auto;position:relative;overflow-x:hidden;min-height:100vh;}
+
+/* ── SCREENS ── */
+.screen{display:none;flex-direction:column;min-height:100vh;background:#f0f2f5;}
+.screen.active{display:flex;}
+.scroll-body{flex:1;overflow-y:auto;padding-bottom:calc(var(--nav-h) + 12px);}
+.scroll-body::-webkit-scrollbar{display:none;}
+
+/* ── BOTTOM NAV ── */
+.bnav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;height:var(--nav-h);background:var(--white);border-top:1px solid var(--slate100);display:flex;z-index:500;padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 20px rgba(0,0,0,.06);}
+.bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;border:none;background:none;font-family:inherit;color:var(--slate400);font-size:.6rem;font-weight:600;transition:color .2s;padding:0;}
+.bnav-item.on{color:var(--g600);}
+.bnav-icon{width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1.15rem;transition:background .2s;}
+.bnav-item.on .bnav-icon{background:var(--g50);}
+
+/* ── TOP BAR ── */
+.topbar{background:var(--white);padding:.875rem 1.1rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--slate100);box-shadow:var(--sh-xs);}
+.topbar-logo{font-family:'Plus Jakarta Sans',sans-serif;font-size:1.3rem;font-weight:800;color:var(--g600);letter-spacing:-.5px;}
+.topbar-logo em{color:var(--o500);font-style:normal;}
+.topbar-actions{display:flex;gap:.5rem;align-items:center;}
+.icon-btn{width:38px;height:38px;border-radius:10px;background:var(--slate100);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.05rem;transition:background .15s;position:relative;}
+.icon-btn:active{background:var(--slate200);}
+.badge-dot{position:absolute;top:7px;right:7px;width:8px;height:8px;background:var(--o500);border-radius:50%;border:2px solid var(--white);}
+
+/* ── BUTTONS ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:.4rem;border:none;border-radius:var(--r-md);font-family:inherit;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn:active{transform:scale(.96);}
+.btn-green{background:linear-gradient(135deg,var(--g500),var(--g600));color:var(--white);box-shadow:0 4px 14px rgba(22,163,74,.35);}
+.btn-green:active{box-shadow:none;}
+.btn-orange{background:linear-gradient(135deg,var(--o500),var(--o600));color:var(--white);box-shadow:0 4px 14px rgba(249,115,22,.3);}
+.btn-outline{background:var(--white);color:var(--g600);border:1.5px solid var(--g200);}
+.btn-ghost{background:var(--slate100);color:var(--slate700);}
+.btn-sm{padding:.45rem .9rem;font-size:.78rem;border-radius:var(--r-sm);}
+.btn-md{padding:.65rem 1.2rem;font-size:.875rem;}
+.btn-full{width:100%;padding:.875rem;font-size:.95rem;border-radius:var(--r-md);}
+
+/* ── CARDS ── */
+.card{background:var(--white);border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden;}
+
+/* ── CHIP / TAG ── */
+.chip{display:inline-flex;align-items:center;gap:.3rem;padding:.28rem .65rem;border-radius:var(--r-full);font-size:.68rem;font-weight:600;}
+.chip-green{background:var(--g50);color:var(--g700);}
+.chip-orange{background:var(--o50);color:var(--o600);}
+.chip-blue{background:var(--b50);color:var(--b600);}
+.chip-gray{background:var(--slate100);color:var(--slate600);}
+.chip-white{background:rgba(255,255,255,.2);color:var(--white);}
+
+/* ── STARS ── */
+.stars{display:inline-flex;gap:1px;font-size:.75rem;}
+.stars.sm{font-size:.62rem;}
+
+/* ── SECTION HEAD ── */
+.sec-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:.875rem;}
+.sec-title{font-size:1rem;font-weight:700;color:var(--slate800);}
+.sec-link{font-size:.78rem;font-weight:600;color:var(--g600);cursor:pointer;}
+
+/* ── DIVIDER ── */
+.divider{height:1px;background:var(--slate100);margin:.25rem 0;}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:calc(var(--nav-h) + 14px);left:50%;transform:translateX(-50%) translateY(16px);background:var(--slate800);color:var(--white);padding:.6rem 1.1rem;border-radius:var(--r-full);font-size:.82rem;font-weight:500;opacity:0;transition:all .3s;z-index:9999;pointer-events:none;white-space:nowrap;max-width:88vw;text-align:center;box-shadow:var(--sh-md);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+/* ═══════════════ LOGIN ═══════════════ */
+#s-login{background:var(--white);justify-content:flex-end;min-height:100vh;}
+.login-hero{flex:1;background:linear-gradient(160deg,var(--g700) 0%,var(--g600) 50%,var(--o500) 130%);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem 2.5rem;position:relative;overflow:hidden;}
+.login-hero::before,.login-hero::after{content:'';position:absolute;border-radius:50%;background:rgba(255,255,255,.07);}
+.login-hero::before{width:220px;height:220px;right:-50px;top:-50px;}
+.login-hero::after{width:160px;height:160px;left:-40px;bottom:-40px;}
+.login-logo-big{font-family:'Plus Jakarta Sans',sans-serif;font-size:2.8rem;font-weight:800;color:var(--white);letter-spacing:-1px;margin-bottom:.2rem;}
+.login-logo-big em{color:var(--o200,#fed7aa);font-style:normal;}
+.login-tag{color:rgba(255,255,255,.75);font-size:.9rem;letter-spacing:.2px;}
+.login-food-icons{display:flex;gap:.75rem;margin-top:1.5rem;font-size:2rem;}
+.login-sheet{background:var(--white);border-radius:var(--r-xl) var(--r-xl) 0 0;padding:2rem 1.5rem 2.5rem;box-shadow:0 -8px 40px rgba(0,0,0,.1);}
+.login-sheet h2{font-size:1.25rem;font-weight:700;margin-bottom:.25rem;}
+.login-sheet p{font-size:.82rem;color:var(--slate500);margin-bottom:1.5rem;}
+.field{margin-bottom:1rem;}
+.field label{display:block;font-size:.78rem;font-weight:600;color:var(--slate600);margin-bottom:.4rem;}
+.field input{width:100%;padding:.78rem 1rem;border:1.5px solid var(--slate200);border-radius:var(--r-md);font-size:.9rem;font-family:inherit;outline:none;transition:border-color .2s;color:var(--slate800);}
+.field input:focus{border-color:var(--g400);}
+.login-foot{text-align:center;font-size:.78rem;color:var(--slate500);margin-top:1rem;}
+.login-foot a{color:var(--g600);font-weight:600;cursor:pointer;}
+.login-divider{display:flex;align-items:center;gap:.75rem;margin:.875rem 0;color:var(--slate400);font-size:.75rem;}
+.login-divider::before,.login-divider::after{content:'';flex:1;height:1px;background:var(--slate200);}
+.btn-social{width:100%;background:var(--slate50);border:1.5px solid var(--slate200);border-radius:var(--r-md);padding:.72rem;font-size:.875rem;font-weight:600;font-family:inherit;cursor:pointer;color:var(--slate700);display:flex;align-items:center;justify-content:center;gap:.5rem;transition:background .15s;}
+.btn-social:active{background:var(--slate100);}
+
+/* ═══════════════ HOME ═══════════════ */
+.home-hero{background:linear-gradient(135deg,var(--g700) 0%,var(--g600) 60%,var(--g500) 100%);padding:1.5rem 1.25rem 4rem;position:relative;overflow:hidden;}
+.home-hero::before{content:'';position:absolute;right:-40px;top:-40px;width:180px;height:180px;background:rgba(255,255,255,.06);border-radius:50%;}
+.home-hero::after{content:'';position:absolute;left:-20px;bottom:-60px;width:130px;height:130px;background:rgba(255,255,255,.04);border-radius:50%;}
+.hero-loc{display:flex;align-items:center;gap:.35rem;color:rgba(255,255,255,.75);font-size:.78rem;font-weight:500;margin-bottom:.6rem;cursor:pointer;}
+.hero-greet{color:rgba(255,255,255,.8);font-size:.875rem;margin-bottom:.15rem;}
+.hero-name{color:var(--white);font-size:1.55rem;font-weight:700;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-.3px;}
+.hero-budget{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.15);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,.2);border-radius:var(--r-full);padding:.4rem .9rem;color:var(--white);font-size:.8rem;font-weight:600;margin-top:.75rem;}
+.search-lift{background:var(--white);border-radius:var(--r-lg);margin:-2.2rem 1.1rem 1rem;box-shadow:var(--sh-md);padding:.875rem 1rem;display:flex;align-items:center;gap:.65rem;border:1.5px solid var(--slate100);}
+.search-lift input{flex:1;border:none;outline:none;font-size:.9rem;font-family:inherit;color:var(--slate800);}
+.search-lift input::placeholder{color:var(--slate400);}
+.search-lift-filter{width:36px;height:36px;border-radius:9px;background:var(--g50);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+
+.cat-scroll{display:flex;gap:.625rem;overflow-x:auto;padding:0 1.1rem 1rem;scrollbar-width:none;}
+.cat-scroll::-webkit-scrollbar{display:none;}
+.cat-pill{flex-shrink:0;display:flex;flex-direction:column;align-items:center;gap:.4rem;cursor:pointer;}
+.cat-pill:active .cat-icon-box{transform:scale(.9);}
+.cat-icon-box{width:60px;height:60px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:1.65rem;box-shadow:var(--sh-xs);transition:transform .15s;}
+.cat-lbl{font-size:.65rem;font-weight:600;color:var(--slate600);}
+
+.ai-card{background:linear-gradient(135deg,#f0fdf6,#dcfce7);border:1.5px solid var(--g200);border-radius:var(--r-lg);padding:1.1rem 1.1rem;margin:0 1.1rem 1rem;cursor:pointer;transition:border-color .2s;}
+.ai-card:active{border-color:var(--g400);}
+.ai-header{display:flex;align-items:center;gap:.5rem;margin-bottom:.5rem;}
+.ai-badge{background:var(--g600);color:var(--white);font-size:.65rem;font-weight:700;padding:.2rem .55rem;border-radius:var(--r-full);letter-spacing:.3px;}
+.ai-text{font-size:.835rem;color:var(--slate700);line-height:1.5;}
+.ai-text strong{color:var(--g700);}
+.ai-suggest{display:flex;gap:.5rem;margin-top:.75rem;overflow-x:auto;scrollbar-width:none;}
+.ai-suggest::-webkit-scrollbar{display:none;}
+.ai-sug-chip{flex-shrink:0;background:var(--white);border:1px solid var(--g200);border-radius:var(--r-full);padding:.35rem .75rem;font-size:.73rem;font-weight:600;color:var(--g700);cursor:pointer;white-space:nowrap;box-shadow:var(--sh-xs);}
+
+/* REST CARD HORIZONTAL */
+.rest-h-card{display:flex;gap:.875rem;background:var(--white);border-radius:var(--r-lg);padding:.875rem;box-shadow:var(--sh-sm);cursor:pointer;transition:box-shadow .2s;align-items:flex-start;}
+.rest-h-card:active{box-shadow:var(--sh-md);}
+.rest-h-img{width:82px;height:82px;border-radius:var(--r-md);object-fit:cover;flex-shrink:0;background:var(--slate100);display:flex;align-items:center;justify-content:center;font-size:2rem;}
+.rest-h-body{flex:1;min-width:0;}
+.rest-h-name{font-size:.92rem;font-weight:700;margin-bottom:.2rem;}
+.rest-h-meta{display:flex;align-items:center;gap:.4rem;font-size:.72rem;color:var(--slate500);margin-bottom:.4rem;flex-wrap:wrap;}
+.rest-h-meta .dot{color:var(--slate300);}
+.rest-h-tags{display:flex;gap:.35rem;flex-wrap:wrap;}
+.rest-h-price{font-size:.75rem;font-weight:600;color:var(--g600);margin-top:.35rem;}
+.rest-h-fav{width:30px;height:30px;border-radius:50%;border:none;background:var(--slate50);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;flex-shrink:0;transition:background .15s;}
+.rest-h-fav.on{background:var(--o50);}
+
+/* PROMO BANNER */
+.promo-banner{background:linear-gradient(135deg,var(--o500),#c2410c);border-radius:var(--r-lg);padding:1.1rem 1.1rem;margin:0 1.1rem 1rem;display:flex;align-items:center;justify-content:space-between;overflow:hidden;position:relative;cursor:pointer;}
+.promo-banner::after{content:'🎉';position:absolute;right:.875rem;top:50%;transform:translateY(-50%);font-size:2.8rem;opacity:.25;}
+.pb-label{font-size:.68rem;color:rgba(255,255,255,.75);font-weight:600;margin-bottom:.15rem;letter-spacing:.3px;}
+.pb-title{font-size:1rem;font-weight:700;color:var(--white);}
+.pb-sub{font-size:.75rem;color:rgba(255,255,255,.8);margin-top:.15rem;}
+
+/* POINTS MINI */
+.points-mini{background:linear-gradient(135deg,#1d4ed8,#1e40af);border-radius:var(--r-lg);padding:1.1rem;margin:0 1.1rem 1rem;display:flex;align-items:center;gap:.875rem;cursor:pointer;}
+.pm-icon{width:48px;height:48px;background:rgba(255,255,255,.15);border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:1.5rem;flex-shrink:0;}
+.pm-info{flex:1;}
+.pm-val{font-size:1.4rem;font-weight:800;color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;}
+.pm-label{font-size:.72rem;color:rgba(255,255,255,.7);}
+.pm-prog-wrap{height:4px;background:rgba(255,255,255,.2);border-radius:2px;margin-top:.5rem;}
+.pm-prog-fill{height:100%;background:var(--o400);border-radius:2px;width:72%;}
+.pm-cta{color:rgba(255,255,255,.8);font-size:1.1rem;}
+
+/* ═══════════════ SEARCH ═══════════════ */
+.search-top{background:var(--white);padding:.875rem 1.1rem;position:sticky;top:0;z-index:200;border-bottom:1px solid var(--slate100);}
+.search-bar{display:flex;align-items:center;gap:.65rem;background:var(--slate100);border-radius:var(--r-md);padding:.72rem 1rem;}
+.search-bar input{flex:1;border:none;outline:none;background:transparent;font-size:.9rem;font-family:inherit;color:var(--slate800);}
+.search-bar input::placeholder{color:var(--slate400);}
+.filter-scroll{display:flex;gap:.5rem;overflow-x:auto;padding:.75rem 1.1rem;scrollbar-width:none;background:var(--white);border-bottom:1px solid var(--slate100);}
+.filter-scroll::-webkit-scrollbar{display:none;}
+.f-chip{flex-shrink:0;padding:.38rem .8rem;border-radius:var(--r-full);border:1.5px solid var(--slate200);font-size:.73rem;font-weight:600;cursor:pointer;background:var(--white);color:var(--slate600);font-family:inherit;transition:all .15s;}
+.f-chip.on{background:var(--g600);color:var(--white);border-color:var(--g600);}
+
+/* FOOD ITEM */
+.food-item{display:flex;gap:.875rem;background:var(--white);border-radius:var(--r-lg);padding:.875rem;margin-bottom:.625rem;cursor:pointer;align-items:center;box-shadow:var(--sh-xs);transition:box-shadow .15s;}
+.food-item:active{box-shadow:var(--sh-sm);}
+.food-img{width:64px;height:64px;border-radius:var(--r-md);background:var(--slate100);display:flex;align-items:center;justify-content:center;font-size:1.9rem;flex-shrink:0;}
+.food-info{flex:1;min-width:0;}
+.food-name{font-size:.9rem;font-weight:700;margin-bottom:.15rem;}
+.food-place{font-size:.72rem;color:var(--slate500);margin-bottom:.3rem;}
+.food-tags{display:flex;gap:.3rem;flex-wrap:wrap;}
+.food-right{display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;flex-shrink:0;}
+.food-price{font-size:.98rem;font-weight:800;color:var(--g600);}
+.food-add{width:30px;height:30px;border-radius:50%;background:var(--g600);border:none;color:var(--white);font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:transform .15s;}
+.food-add:active{transform:scale(.88);}
+
+/* ═══════════════ MAP ═══════════════ */
+.map-wrap{position:relative;height:270px;background:linear-gradient(145deg,#dbeafe,#bfdbfe);overflow:hidden;}
+.map-grid{position:absolute;inset:0;background-image:linear-gradient(rgba(147,197,253,.25) 1px,transparent 1px),linear-gradient(90deg,rgba(147,197,253,.25) 1px,transparent 1px);background-size:36px 36px;}
+.map-road-h{position:absolute;background:rgba(255,255,255,.45);height:3px;}
+.map-road-v{position:absolute;background:rgba(255,255,255,.45);width:3px;}
+.map-pin{position:absolute;display:flex;flex-direction:column;align-items:center;cursor:pointer;z-index:2;transform:translate(-50%,-100%);transition:transform .15s;}
+.map-pin:active{transform:translate(-50%,-100%) scale(1.15);}
+.map-bubble{background:var(--white);border-radius:20px;padding:.3rem .65rem;font-size:.7rem;font-weight:700;box-shadow:var(--sh-md);white-space:nowrap;border:2px solid var(--g400);color:var(--g700);display:flex;align-items:center;gap:.25rem;}
+.map-bubble.orange{border-color:var(--o400);color:var(--o600);}
+.map-bubble.blue{border-color:var(--b500);color:var(--b600);}
+.map-tail{width:0;height:0;border-left:5px solid transparent;border-right:5px solid transparent;border-top:6px solid var(--g400);}
+.map-tail.orange{border-top-color:var(--o400);}
+.map-tail.blue{border-top-color:var(--b500);}
+.my-loc{position:absolute;transform:translate(-50%,-50%);z-index:3;}
+.my-loc-dot{width:14px;height:14px;background:#3b82f6;border-radius:50%;border:2.5px solid var(--white);box-shadow:0 0 0 5px rgba(59,130,246,.22);}
+.map-ctrls{position:absolute;right:.875rem;top:.875rem;display:flex;flex-direction:column;gap:.35rem;}
+.map-ctrl{width:34px;height:34px;background:var(--white);border:1px solid var(--slate200);border-radius:9px;font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:var(--sh-sm);}
+.map-legend{position:absolute;bottom:.75rem;left:.75rem;background:var(--white);border-radius:var(--r-md);padding:.5rem .75rem;box-shadow:var(--sh-sm);display:flex;gap:.75rem;}
+.ml-item{display:flex;align-items:center;gap:.3rem;font-size:.65rem;font-weight:600;color:var(--slate600);}
+.ml-dot{width:9px;height:9px;border-radius:50%;}
+
+/* NEARBY LIST ITEM */
+.near-item{display:flex;align-items:center;gap:.875rem;background:var(--white);border-radius:var(--r-lg);padding:.875rem;margin-bottom:.625rem;cursor:pointer;box-shadow:var(--sh-xs);transition:box-shadow .15s;}
+.near-item:active{box-shadow:var(--sh-sm);}
+.near-emoji{width:52px;height:52px;border-radius:var(--r-md);background:var(--slate50);display:flex;align-items:center;justify-content:center;font-size:1.6rem;flex-shrink:0;}
+.near-info{flex:1;min-width:0;}
+.near-name{font-size:.9rem;font-weight:700;margin-bottom:.2rem;}
+.near-meta{font-size:.72rem;color:var(--slate500);}
+.near-right{display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;}
+.near-dist{font-size:.72rem;font-weight:700;color:var(--g600);background:var(--g50);padding:.2rem .5rem;border-radius:var(--r-full);}
+.near-time{font-size:.68rem;color:var(--slate400);}
+
+/* ═══════════════ RESTAURANT DETAIL ═══════════════ */
+.rd-hero{height:220px;background:var(--slate100);position:relative;display:flex;align-items:center;justify-content:center;font-size:5rem;}
+.rd-back{position:absolute;top:1rem;left:1rem;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;box-shadow:var(--sh-sm);}
+.rd-fav{position:absolute;top:1rem;right:1rem;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.9);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1rem;box-shadow:var(--sh-sm);}
+.rd-body{background:var(--white);border-radius:var(--r-xl) var(--r-xl) 0 0;margin-top:-1.5rem;padding:1.25rem 1.1rem;flex:1;}
+.rd-name{font-size:1.3rem;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;margin-bottom:.35rem;}
+.rd-rating-row{display:flex;align-items:center;gap:.5rem;margin-bottom:.625rem;}
+.rd-rating-num{font-size:.875rem;font-weight:700;color:var(--slate800);}
+.rd-reviews{font-size:.75rem;color:var(--slate500);}
+.rd-info-row{display:flex;gap:1rem;margin-bottom:1rem;font-size:.78rem;color:var(--slate600);}
+.rd-info-item{display:flex;align-items:center;gap:.3rem;}
+.rd-tabs{display:flex;border-bottom:2px solid var(--slate100);margin-bottom:1rem;}
+.rd-tab{flex:1;text-align:center;padding:.65rem;font-size:.82rem;font-weight:600;color:var(--slate500);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:color .15s;}
+.rd-tab.on{color:var(--g600);border-bottom-color:var(--g600);}
+.menu-item-card{display:flex;gap:.875rem;padding:.875rem 0;border-bottom:1px solid var(--slate100);align-items:flex-start;}
+.menu-item-card:last-child{border-bottom:none;}
+.mic-img{width:70px;height:70px;border-radius:var(--r-md);background:var(--slate100);display:flex;align-items:center;justify-content:center;font-size:2rem;flex-shrink:0;}
+.mic-info{flex:1;}
+.mic-name{font-size:.875rem;font-weight:700;margin-bottom:.2rem;}
+.mic-desc{font-size:.73rem;color:var(--slate500);line-height:1.4;margin-bottom:.4rem;}
+.mic-nutri{display:flex;gap:.5rem;}
+.mic-nutri span{font-size:.65rem;color:var(--slate500);background:var(--slate50);padding:.15rem .4rem;border-radius:4px;}
+.mic-right{display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0;}
+.mic-price{font-size:.95rem;font-weight:800;color:var(--g600);}
+
+/* REVIEW */
+.review-card{background:var(--slate50);border-radius:var(--r-md);padding:.875rem;margin-bottom:.625rem;}
+.rev-header{display:flex;align-items:center;gap:.625rem;margin-bottom:.5rem;}
+.rev-avatar{width:36px;height:36px;border-radius:50%;background:var(--g100);display:flex;align-items:center;justify-content:center;font-size:.9rem;}
+.rev-name{font-size:.82rem;font-weight:700;}
+.rev-date{font-size:.68rem;color:var(--slate400);}
+.rev-text{font-size:.8rem;color:var(--slate600);line-height:1.45;}
+
+/* ═══════════════ PROMOTIONS ═══════════════ */
+.countdown-bar{background:linear-gradient(90deg,var(--o600),var(--o500));padding:.75rem 1.1rem;display:flex;align-items:center;justify-content:space-between;}
+.cd-text{font-size:.78rem;color:rgba(255,255,255,.85);font-weight:500;}
+.cd-time{font-size:1rem;font-weight:800;color:var(--white);font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:.5px;}
+.promo-card{background:var(--white);border-radius:var(--r-lg);box-shadow:var(--sh-sm);overflow:hidden;margin-bottom:.875rem;cursor:pointer;transition:transform .15s;}
+.promo-card:active{transform:scale(.98);}
+.promo-img{height:140px;display:flex;align-items:center;justify-content:center;font-size:4.5rem;position:relative;}
+.promo-badge{position:absolute;top:.75rem;right:.75rem;font-size:.72rem;font-weight:700;padding:.3rem .65rem;border-radius:var(--r-full);background:var(--o500);color:var(--white);}
+.promo-badge.green{background:var(--g600);}
+.promo-body{padding:1rem 1rem .875rem;}
+.promo-title{font-size:.95rem;font-weight:700;margin-bottom:.25rem;}
+.promo-desc{font-size:.78rem;color:var(--slate500);line-height:1.4;margin-bottom:.75rem;}
+.promo-footer{display:flex;align-items:center;justify-content:space-between;}
+.promo-price{font-size:1.05rem;font-weight:800;color:var(--g600);}
+.promo-old{font-size:.75rem;color:var(--slate400);text-decoration:line-through;}
+
+/* ═══════════════ ORDERS ═══════════════ */
+.order-status-card{background:var(--white);border-radius:var(--r-lg);padding:1.25rem;box-shadow:var(--sh-sm);margin-bottom:.875rem;}
+.osc-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:1rem;}
+.osc-num{font-size:.72rem;color:var(--slate400);font-weight:600;}
+.osc-name{font-size:.95rem;font-weight:700;margin-top:.1rem;}
+.osc-status{font-size:.72rem;font-weight:700;padding:.3rem .7rem;border-radius:var(--r-full);}
+.s-prep{background:var(--o50);color:var(--o600);}
+.s-ready{background:var(--g50);color:var(--g700);}
+.s-done{background:var(--slate100);color:var(--slate600);}
+/* Progress bar */
+.prog-steps{display:flex;align-items:center;margin-bottom:1rem;}
+.ps-step{display:flex;flex-direction:column;align-items:center;gap:.3rem;flex:1;}
+.ps-circle{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.72rem;font-weight:700;transition:all .3s;}
+.ps-circle.done{background:var(--g600);color:var(--white);}
+.ps-circle.active{background:var(--o500);color:var(--white);box-shadow:0 0 0 4px var(--o100);}
+.ps-circle.pending{background:var(--slate200);color:var(--slate500);}
+.ps-label{font-size:.58rem;font-weight:600;color:var(--slate500);text-align:center;max-width:52px;line-height:1.2;}
+.ps-label.done{color:var(--g700);}
+.ps-label.active{color:var(--o600);}
+.ps-line{flex:1;height:2px;background:var(--slate200);margin-top:-18px;}
+.ps-line.done{background:var(--g500);}
+.osc-eta{display:flex;align-items:center;gap:.4rem;font-size:.8rem;color:var(--slate600);background:var(--slate50);padding:.6rem .875rem;border-radius:var(--r-md);}
+
+/* TIME PICKER */
+.time-pick-card{background:var(--white);border-radius:var(--r-lg);padding:1.1rem;box-shadow:var(--sh-sm);margin-bottom:.875rem;}
+.tp-title{font-size:.875rem;font-weight:700;margin-bottom:.75rem;}
+.time-slots{display:flex;gap:.5rem;flex-wrap:wrap;}
+.t-slot{padding:.4rem .875rem;border-radius:var(--r-full);border:1.5px solid var(--slate200);font-size:.78rem;font-weight:600;cursor:pointer;font-family:inherit;background:var(--white);color:var(--slate700);transition:all .15s;}
+.t-slot.on{background:var(--g600);color:var(--white);border-color:var(--g600);}
+
+/* ORDER HIST */
+.order-hist-card{background:var(--white);border-radius:var(--r-lg);padding:.875rem;box-shadow:var(--sh-xs);margin-bottom:.625rem;cursor:pointer;}
+.ohc-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.5rem;}
+.ohc-name{font-size:.875rem;font-weight:700;}
+.ohc-meta{font-size:.72rem;color:var(--slate500);margin-top:.1rem;}
+.ohc-foot{display:flex;justify-content:space-between;align-items:center;}
+.ohc-pts{font-size:.72rem;color:var(--g600);font-weight:600;background:var(--g50);padding:.2rem .5rem;border-radius:var(--r-full);}
+.ohc-total{font-size:.9rem;font-weight:800;color:var(--slate800);}
+
+/* ═══════════════ POINTS ═══════════════ */
+.pts-hero{background:linear-gradient(135deg,#1d4ed8,#1e40af,#1d4ed8);padding:2rem 1.25rem 1.5rem;text-align:center;color:var(--white);}
+.pts-big{font-size:3.2rem;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;letter-spacing:-1px;}
+.pts-sub{font-size:.8rem;opacity:.7;margin-bottom:.75rem;}
+.pts-level{display:inline-flex;align-items:center;gap:.4rem;background:rgba(255,255,255,.15);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.2);border-radius:var(--r-full);padding:.4rem 1rem;font-size:.82rem;font-weight:600;}
+.pts-prog-card{background:var(--white);border-radius:var(--r-lg);margin:-1.5rem 1.1rem 1rem;box-shadow:var(--sh-md);padding:1.1rem;}
+.ppc-row{display:flex;justify-content:space-between;font-size:.78rem;color:var(--slate500);margin-bottom:.5rem;}
+.ppc-bar{height:8px;background:var(--slate100);border-radius:4px;overflow:hidden;}
+.ppc-fill{height:100%;background:linear-gradient(90deg,var(--g400),var(--g500));border-radius:4px;}
+.ppc-note{font-size:.72rem;color:var(--slate500);margin-top:.5rem;}
+.benefit-row{display:flex;gap:.625rem;overflow-x:auto;padding:.5rem 0 .75rem;scrollbar-width:none;}
+.benefit-row::-webkit-scrollbar{display:none;}
+.benefit-card{flex-shrink:0;background:linear-gradient(135deg,var(--g50),var(--g100));border:1.5px solid var(--g200);border-radius:var(--r-lg);padding:.875rem .75rem;text-align:center;min-width:95px;cursor:pointer;}
+.bc-emoji{font-size:1.8rem;margin-bottom:.4rem;}
+.bc-name{font-size:.72rem;font-weight:700;color:var(--g800);margin-bottom:.2rem;}
+.bc-pts{font-size:.65rem;font-weight:600;color:var(--g600);}
+.bc-locked{opacity:.5;filter:grayscale(.5);}
+.bc-lock-icon{font-size:.75rem;display:block;margin-bottom:.2rem;}
+.pts-hist-item{display:flex;align-items:center;gap:.875rem;background:var(--white);padding:.875rem 1.1rem;border-bottom:1px solid var(--slate100);}
+.phi-icon{width:38px;height:38px;border-radius:50%;background:var(--slate50);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.phi-info{flex:1;}
+.phi-desc{font-size:.85rem;font-weight:600;}
+.phi-date{font-size:.7rem;color:var(--slate400);margin-top:.1rem;}
+.phi-pts{font-size:.9rem;font-weight:800;}
+.phi-pts.gain{color:var(--g600);}
+.phi-pts.spend{color:var(--o600);}
+
+/* ═══════════════ NOTIFICATIONS ═══════════════ */
+.notif-item{display:flex;gap:.875rem;background:var(--white);padding:.875rem 1.1rem;border-bottom:1px solid var(--slate100);cursor:pointer;transition:background .15s;}
+.notif-item:active{background:var(--slate50);}
+.notif-item.unread{background:var(--g50);}
+.ni-icon{width:44px;height:44px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:1.3rem;flex-shrink:0;}
+.ni-body{flex:1;}
+.ni-title{font-size:.85rem;font-weight:700;margin-bottom:.2rem;}
+.ni-text{font-size:.77rem;color:var(--slate600);line-height:1.4;}
+.ni-time{font-size:.67rem;color:var(--slate400);margin-top:.3rem;}
+.ni-dot{width:8px;height:8px;border-radius:50%;background:var(--g500);flex-shrink:0;margin-top:.4rem;}
+
+/* ═══════════════ PROFILE ═══════════════ */
+.prof-hero{background:linear-gradient(135deg,var(--g700),var(--g600));padding:2.25rem 1.25rem 1.75rem;text-align:center;color:var(--white);}
+.prof-avatar{width:86px;height:86px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:2.5rem;margin:0 auto .875rem;border:3px solid rgba(255,255,255,.3);cursor:pointer;}
+.prof-name{font-size:1.25rem;font-weight:800;font-family:'Plus Jakarta Sans',sans-serif;}
+.prof-uni{font-size:.8rem;opacity:.8;margin-top:.2rem;}
+.prof-level{display:inline-flex;align-items:center;gap:.35rem;background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.2);border-radius:var(--r-full);padding:.35rem .875rem;font-size:.75rem;font-weight:600;margin-top:.75rem;}
+.prof-stats{display:grid;grid-template-columns:repeat(3,1fr);background:var(--white);border-radius:var(--r-xl);margin:-1rem 1.1rem 1rem;box-shadow:var(--sh-md);overflow:hidden;}
+.pstat{padding:1rem .5rem;text-align:center;border-right:1px solid var(--slate100);}
+.pstat:last-child{border-right:none;}
+.pstat-val{font-size:1.2rem;font-weight:800;color:var(--slate900);font-family:'Plus Jakarta Sans',sans-serif;}
+.pstat-lbl{font-size:.62rem;color:var(--slate500);margin-top:.15rem;font-weight:500;}
+.menu-group{background:var(--white);border-radius:var(--r-lg);box-shadow:var(--sh-xs);overflow:hidden;margin:0 1.1rem 1rem;}
+.mi{display:flex;align-items:center;gap:.875rem;padding:1rem 1.1rem;cursor:pointer;border-bottom:1px solid var(--slate100);transition:background .15s;}
+.mi:last-child{border-bottom:none;}
+.mi:active{background:var(--slate50);}
+.mi-icon{width:38px;height:38px;border-radius:var(--r-md);display:flex;align-items:center;justify-content:center;font-size:1.1rem;flex-shrink:0;}
+.mi-text{flex:1;font-size:.875rem;font-weight:600;}
+.mi-arrow{color:var(--slate300);font-size:1rem;}
+
+/* PAYMENT METHODS */
+.pay-methods{display:flex;gap:.5rem;flex-wrap:wrap;padding:0 1.1rem;}
+.pay-card{background:var(--white);border-radius:var(--r-md);padding:.75rem 1rem;display:flex;align-items:center;gap:.6rem;box-shadow:var(--sh-xs);border:1.5px solid var(--slate100);cursor:pointer;flex:1;min-width:calc(50% - .25rem);transition:border-color .15s;}
+.pay-card.on{border-color:var(--g400);background:var(--g50);}
+.pay-card:active{border-color:var(--g400);}
+.pay-icon{font-size:1.4rem;}
+.pay-name{font-size:.78rem;font-weight:600;color:var(--slate700);}
+
+/* COMPARATOR */
+.cmp-table{background:var(--white);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--sh-sm);}
+.cmp-row{display:flex;border-bottom:1px solid var(--slate100);}
+.cmp-row:last-child{border-bottom:none;}
+.cmp-cell{flex:1;padding:.75rem;font-size:.82rem;text-align:center;display:flex;align-items:center;justify-content:center;}
+.cmp-cell.lbl{flex:none;width:95px;background:var(--slate50);text-align:left;font-size:.73rem;color:var(--slate500);font-weight:600;justify-content:flex-start;}
+.cmp-cell.best{color:var(--g700);font-weight:700;}
+.cmp-row.hdr .cmp-cell{font-weight:700;font-size:.78rem;background:var(--g600);color:var(--white);}
+.cmp-row.hdr .cmp-cell.lbl{background:var(--g700);}
+.winner-box{background:var(--g50);border:1.5px solid var(--g200);border-radius:var(--r-md);padding:.875rem 1rem;margin-top:1rem;font-size:.82rem;color:var(--g700);line-height:1.45;}
+
+@media(min-width:431px){
+  body{box-shadow:var(--sh-xl);border-radius:20px;margin:1rem auto;min-height:auto;}
+  .bnav{border-radius:0 0 20px 20px;}
+}
+</style>
+</head>
+<body>
+<div class="toast" id="toast"></div>
+
+<!-- ════════════════════════════════════════
+     LOGIN
+════════════════════════════════════════ -->
+<div class="screen active" id="s-login">
+  <div class="login-hero">
+    <div class="login-logo-big">Uni<em>Food</em></div>
+    <div class="login-tag">Come bien · Gasta menos · Rinde más</div>
+    <div class="login-food-icons">🥗 🍱 🥤 🍎 🌿</div>
+  </div>
+  <div class="login-sheet">
+    <h2>Bienvenido/a 👋</h2>
+    <p>Accede con tu correo institucional</p>
+    <div class="field">
+      <label>Correo institucional</label>
+      <input type="email" id="in-email" placeholder="sofia@universidad.edu.co" value="sofia@universidad.edu.co">
+    </div>
+    <div class="field">
+      <label>Contraseña</label>
+      <input type="password" id="in-pass" placeholder="••••••••" value="123456">
+    </div>
+    <button class="btn btn-green btn-full" onclick="doLogin()">Iniciar sesión</button>
+    <div class="login-divider">o continúa con</div>
+    <button class="btn-social" onclick="doLogin()">🎓 &nbsp; Correo universitario</button>
+    <div class="login-foot">¿Sin cuenta? <a onclick="toast('¡Registro próximamente!')">Regístrate gratis</a></div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     HOME
+════════════════════════════════════════ -->
+<div class="screen" id="s-home">
+  <div class="scroll-body">
+    <!-- Hero -->
+    <div class="home-hero">
+      <div class="hero-loc">📍 Universidad del Valle &nbsp;▾</div>
+      <div class="hero-greet">Buenas tardes, ¡hola!</div>
+      <div class="hero-name">Sofía Martínez ✨</div>
+      <div class="hero-budget">💰 Presupuesto de hoy: $3.20</div>
+    </div>
+    <!-- Buscador flotante -->
+    <div class="search-lift" onclick="goTo('buscar')">
+      <span style="font-size:1.1rem;color:var(--slate400)">🔍</span>
+      <input placeholder="¿Qué quieres comer hoy?" readonly>
+      <button class="search-lift-filter" onclick="event.stopPropagation();toast('Abriendo filtros...')">⚙️</button>
+    </div>
+
+    <!-- Categorías -->
+    <div style="padding:0 1.1rem .25rem"><div class="sec-head"><span class="sec-title">¿Qué se te antoja?</span><span class="sec-link" onclick="goTo('buscar')">Ver todo</span></div></div>
+    <div class="cat-scroll">
+      <div class="cat-pill" onclick="filterCat('Saludable')"><div class="cat-icon-box" style="background:#dcfce7">🥗</div><span class="cat-lbl">Saludable</span></div>
+      <div class="cat-pill" onclick="filterCat('Vegetariana')"><div class="cat-icon-box" style="background:#fef9c3">🥦</div><span class="cat-lbl">Vegetariana</span></div>
+      <div class="cat-pill" onclick="filterCat('Vegana')"><div class="cat-icon-box" style="background:#f0fdf4">🌿</div><span class="cat-lbl">Vegana</span></div>
+      <div class="cat-pill" onclick="filterCat('Económico')"><div class="cat-icon-box" style="background:#fce7f3">💸</div><span class="cat-lbl">Económico</span></div>
+      <div class="cat-pill" onclick="filterCat('Alta proteína')"><div class="cat-icon-box" style="background:#eff6ff">💪</div><span class="cat-lbl">Proteína</span></div>
+      <div class="cat-pill" onclick="filterCat('Sin gluten')"><div class="cat-icon-box" style="background:#fff7ed">🌾</div><span class="cat-lbl">Sin gluten</span></div>
+      <div class="cat-pill" onclick="filterCat('Bebidas')"><div class="cat-icon-box" style="background:#e0f2fe">🥤</div><span class="cat-lbl">Bebidas</span></div>
+      <div class="cat-pill" onclick="filterCat('Snacks')"><div class="cat-icon-box" style="background:#fef3c7">🍎</div><span class="cat-lbl">Snacks</span></div>
+    </div>
+
+    <!-- IA card -->
+    <div class="ai-card" onclick="toast('Generando nueva recomendación IA...')">
+      <div class="ai-header">
+        <span class="ai-badge">✨ IA UniFood</span>
+        <span style="font-size:.72rem;color:var(--g700);font-weight:500;">Basado en tu historial</span>
+      </div>
+      <div class="ai-text">Con tu presupuesto de hoy puedes pedir la <strong>Ensalada Ejecutiva</strong> en Cafetería Central por <strong>$2.50</strong> y aún te queda para un jugo natural. ¡Alta en proteínas y vegetariana! 🥗</div>
+      <div class="ai-suggest">
+        <div class="ai-sug-chip" onclick="event.stopPropagation();toast('Mostrando opciones vegetarianas...')">🥦 Vegetariana hoy</div>
+        <div class="ai-sug-chip" onclick="event.stopPropagation();toast('Opciones bajo $2.00...')">💸 Menor a $2.00</div>
+        <div class="ai-sug-chip" onclick="event.stopPropagation();toast('Alta en proteínas...')">💪 Alto proteína</div>
+        <div class="ai-sug-chip" onclick="event.stopPropagation();goTo('promociones')">🎉 Promociones</div>
+      </div>
+    </div>
+
+    <!-- Promo banner -->
+    <div class="promo-banner" onclick="goTo('promociones')">
+      <div>
+        <div class="pb-label">OFERTA DEL DÍA</div>
+        <div class="pb-title">2×1 en jugos naturales</div>
+        <div class="pb-sub">Hasta las 3:00 p.m. · Solo en Jugos & Más</div>
+      </div>
+      <button class="btn btn-sm" style="background:rgba(255,255,255,.2);color:white;border:1.5px solid rgba(255,255,255,.35);flex-shrink:0;">Ver ofertas</button>
+    </div>
+
+    <!-- Restaurantes -->
+    <div style="padding:0 1.1rem .5rem"><div class="sec-head"><span class="sec-title">Cafeterías cercanas 📍</span><span class="sec-link" onclick="goTo('mapa')">Ver mapa</span></div></div>
+    <div style="display:flex;flex-direction:column;gap:.625rem;padding:0 1.1rem;">
+      <div class="rest-h-card" onclick="openRest(0)">
+        <div class="rest-h-img" style="background:#f0fdf4">🏫</div>
+        <div class="rest-h-body">
+          <div class="rest-h-name">Cafetería Central</div>
+          <div class="rest-h-meta">
+            <span style="color:var(--o400)">⭐</span><span style="font-weight:700;color:var(--slate800)">4.8</span><span style="font-size:.68rem;color:var(--slate500)">(152 opiniones)</span>
+            <span class="dot">·</span><span>5 min</span><span class="dot">·</span><span>🟢 Abierto</span>
+          </div>
+          <div class="rest-h-tags"><span class="chip chip-green">Vegetariana</span><span class="chip chip-orange">Económico</span></div>
+          <div class="rest-h-price">Desde $1.60 · Entrega en 10 min</div>
+        </div>
+        <button class="rest-h-fav" onclick="event.stopPropagation();toggleFav(this)" title="Favorito">🤍</button>
+      </div>
+      <div class="rest-h-card" onclick="openRest(1)">
+        <div class="rest-h-img" style="background:#f0fdf4">🌿</div>
+        <div class="rest-h-body">
+          <div class="rest-h-name">Verde Vida</div>
+          <div class="rest-h-meta">
+            <span style="color:var(--o400)">⭐</span><span style="font-weight:700;color:var(--slate800)">4.6</span><span style="font-size:.68rem;color:var(--slate500)">(89 opiniones)</span>
+            <span class="dot">·</span><span>3 min</span><span class="dot">·</span><span>🟢 Abierto</span>
+          </div>
+          <div class="rest-h-tags"><span class="chip chip-green">Vegana</span><span class="chip chip-blue">Sin gluten</span></div>
+          <div class="rest-h-price">Desde $1.85 · Entrega en 8 min</div>
+        </div>
+        <button class="rest-h-fav" onclick="event.stopPropagation();toggleFav(this)">🤍</button>
+      </div>
+      <div class="rest-h-card" onclick="openRest(2)">
+        <div class="rest-h-img" style="background:#eff6ff">🍕</div>
+        <div class="rest-h-body">
+          <div class="rest-h-name">Food Court Bloque A</div>
+          <div class="rest-h-meta">
+            <span style="color:var(--o400)">⭐</span><span style="font-weight:700;color:var(--slate800)">4.4</span><span style="font-size:.68rem;color:var(--slate500)">(204 opiniones)</span>
+            <span class="dot">·</span><span>8 min</span><span class="dot">·</span><span>🟢 Abierto</span>
+          </div>
+          <div class="rest-h-tags"><span class="chip chip-orange">Variado</span><span class="chip chip-gray">Alta proteína</span></div>
+          <div class="rest-h-price">Desde $2.10 · Entrega en 15 min</div>
+        </div>
+        <button class="rest-h-fav" onclick="event.stopPropagation();toggleFav(this)">🤍</button>
+      </div>
+      <div class="rest-h-card" onclick="openRest(3)">
+        <div class="rest-h-img" style="background:#fef9c3">🥤</div>
+        <div class="rest-h-body">
+          <div class="rest-h-name">Jugos & Más</div>
+          <div class="rest-h-meta">
+            <span style="color:var(--o400)">⭐</span><span style="font-weight:700;color:var(--slate800)">4.7</span><span style="font-size:.68rem;color:var(--slate500)">(311 opiniones)</span>
+            <span class="dot">·</span><span>2 min</span><span class="dot">·</span><span>🟢 Abierto</span>
+          </div>
+          <div class="rest-h-tags"><span class="chip chip-green">Saludable</span><span class="chip chip-orange">Económico</span></div>
+          <div class="rest-h-price">Desde $0.80 · Entrega en 5 min</div>
+        </div>
+        <button class="rest-h-fav" onclick="event.stopPropagation();toggleFav(this)">🤍</button>
+      </div>
+    </div>
+
+    <!-- Points mini -->
+    <div style="padding:1.1rem 0 0">
+      <div style="padding:0 1.1rem .5rem"><div class="sec-title">Tus UniPoints 🏆</div></div>
+      <div class="points-mini" onclick="goTo('puntos')">
+        <div class="pm-icon">🏆</div>
+        <div class="pm-info">
+          <div class="pm-val">1,240</div>
+          <div class="pm-label">UniPoints · Nivel Dorado ⭐</div>
+          <div class="pm-prog-wrap"><div class="pm-prog-fill"></div></div>
+        </div>
+        <div class="pm-cta">›</div>
+      </div>
+    </div>
+    <div style="height:.5rem"></div>
+  </div>
+
+  <nav class="bnav">
+    <button class="bnav-item on" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════
+     BUSCAR
+════════════════════════════════════════ -->
+<div class="screen" id="s-buscar">
+  <div class="search-top">
+    <div class="search-bar">
+      <span style="font-size:1rem;color:var(--slate400)">🔍</span>
+      <input id="sf" placeholder="Platos, restaurantes, ingredientes..." oninput="renderFoods(this.value)">
+      <span style="cursor:pointer;color:var(--slate400);font-size:.85rem" onclick="document.getElementById('sf').value='';renderFoods('')">✕</span>
+    </div>
+  </div>
+  <!-- Filtros -->
+  <div class="filter-scroll">
+    <button class="f-chip on" onclick="setFilter(this,'Todos')">Todos</button>
+    <button class="f-chip" onclick="setFilter(this,'Saludable')">🥗 Saludable</button>
+    <button class="f-chip" onclick="setFilter(this,'Vegetariana')">🥦 Vegetariana</button>
+    <button class="f-chip" onclick="setFilter(this,'Vegana')">🌿 Vegana</button>
+    <button class="f-chip" onclick="setFilter(this,'Alta proteína')">💪 Proteína</button>
+    <button class="f-chip" onclick="setFilter(this,'Sin gluten')">🌾 Sin gluten</button>
+    <button class="f-chip" onclick="setFilter(this,'Económico')">💸 Económico</button>
+    <button class="f-chip" onclick="setFilter(this,'Abierto ahora')">🟢 Abierto</button>
+  </div>
+  <!-- Precio + Distancia -->
+  <div style="display:flex;gap:.5rem;padding:.5rem 1.1rem;background:var(--white);border-bottom:1px solid var(--slate100);">
+    <button class="btn btn-ghost btn-sm" onclick="toast('Filtro por precio')">💰 Precio</button>
+    <button class="btn btn-ghost btn-sm" onclick="toast('Filtro por distancia')">📏 Distancia</button>
+    <button class="btn btn-ghost btn-sm" onclick="goTo('comparador')">⚖️ Comparar</button>
+  </div>
+  <div class="scroll-body" style="padding-top:0">
+    <div style="padding:1rem 1.1rem .5rem;font-size:.78rem;color:var(--slate500)" id="food-count"></div>
+    <div style="padding:0 1.1rem" id="food-list"></div>
+  </div>
+  <nav class="bnav">
+    <button class="bnav-item" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item on" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════
+     MAPA
+════════════════════════════════════════ -->
+<div class="screen" id="s-mapa">
+  <div class="topbar">
+    <span class="topbar-logo">Uni<em>Food</em></span>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="goTo('comparador')">⚖️</button>
+      <button class="icon-btn" onclick="goTo('notifs')"><span class="badge-dot"></span>🔔</button>
+    </div>
+  </div>
+  <div class="scroll-body" style="padding-top:0;padding-bottom:calc(var(--nav-h)+12px)">
+    <div class="map-wrap">
+      <div class="map-grid"></div>
+      <div class="map-road-h" style="top:45%;left:0;right:0;opacity:.6"></div>
+      <div class="map-road-h" style="top:68%;left:0;right:0;opacity:.4"></div>
+      <div class="map-road-v" style="left:38%;top:0;bottom:0;opacity:.5"></div>
+      <div class="map-road-v" style="left:62%;top:0;bottom:0;opacity:.4"></div>
+      <div class="map-pin" style="top:40%;left:42%" onclick="openRest(0)"><div class="map-bubble">🏫 Central</div><div class="map-tail"></div></div>
+      <div class="map-pin" style="top:60%;left:66%" onclick="openRest(1)"><div class="map-bubble orange">🌿 Verde Vida</div><div class="map-tail orange"></div></div>
+      <div class="map-pin" style="top:28%;left:70%" onclick="openRest(2)"><div class="map-bubble blue">🍕 Food Court</div><div class="map-tail blue"></div></div>
+      <div class="map-pin" style="top:65%;left:28%" onclick="openRest(3)"><div class="map-bubble orange">🥤 Jugos</div><div class="map-tail orange"></div></div>
+      <div class="my-loc" style="top:50%;left:52%"><div class="my-loc-dot"></div></div>
+      <div class="map-ctrls">
+        <button class="map-ctrl" onclick="toast('Zoom +')">+</button>
+        <button class="map-ctrl" onclick="toast('Zoom −')">−</button>
+        <button class="map-ctrl" onclick="toast('Mi ubicación')">📍</button>
+      </div>
+      <div class="map-legend">
+        <div class="ml-item"><div class="ml-dot" style="background:var(--g500)"></div>Cafetería</div>
+        <div class="ml-item"><div class="ml-dot" style="background:var(--o500)"></div>Restaurante</div>
+        <div class="ml-item"><div class="ml-dot" style="background:#3b82f6"></div>Yo</div>
+      </div>
+    </div>
+    <div style="padding:1.1rem">
+      <div class="sec-head"><span class="sec-title">Más cercanos</span><span class="sec-link" onclick="toast('Ordenar por...')">Ordenar ▾</span></div>
+      <div class="near-item" onclick="openRest(3)">
+        <div class="near-emoji">🥤</div>
+        <div class="near-info"><div class="near-name">Jugos & Más</div><div class="near-meta">⭐ 4.7 · (311) · $0.80–$2.10 · 🟢 Abierto</div><div class="near-meta" style="margin-top:.15rem">📍 Bloque B, piso 1 · Cómo llegar ›</div></div>
+        <div class="near-right"><div class="near-dist">180 m</div><div class="near-time">~2 min</div></div>
+      </div>
+      <div class="near-item" onclick="openRest(1)">
+        <div class="near-emoji">🌿</div>
+        <div class="near-info"><div class="near-name">Verde Vida</div><div class="near-meta">⭐ 4.6 · (89) · $1.85–$3.90 · 🟢 Abierto</div><div class="near-meta" style="margin-top:.15rem">📍 Bloque C, piso 2 · Cómo llegar ›</div></div>
+        <div class="near-right"><div class="near-dist">280 m</div><div class="near-time">~3 min</div></div>
+      </div>
+      <div class="near-item" onclick="openRest(0)">
+        <div class="near-emoji">🏫</div>
+        <div class="near-info"><div class="near-name">Cafetería Central</div><div class="near-meta">⭐ 4.8 · (152) · $1.60–$3.20 · 🟢 Abierto</div><div class="near-meta" style="margin-top:.15rem">📍 Edificio principal · Cómo llegar ›</div></div>
+        <div class="near-right"><div class="near-dist">420 m</div><div class="near-time">~5 min</div></div>
+      </div>
+      <div class="near-item" onclick="openRest(2)">
+        <div class="near-emoji">🍕</div>
+        <div class="near-info"><div class="near-name">Food Court Bloque A</div><div class="near-meta">⭐ 4.4 · (204) · $2.10–$4.70 · 🟢 Abierto</div><div class="near-meta" style="margin-top:.15rem">📍 Bloque A, planta baja · Cómo llegar ›</div></div>
+        <div class="near-right"><div class="near-dist">650 m</div><div class="near-time">~8 min</div></div>
+      </div>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="bnav-item" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item on" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════
+     RESTAURANT DETAIL
+════════════════════════════════════════ -->
+<div class="screen" id="s-rest">
+  <div class="scroll-body" style="padding-top:0;padding-bottom:100px">
+    <div class="rd-hero" id="rd-hero">
+      <button class="rd-back" onclick="goBack()">←</button>
+      <button class="rd-fav" onclick="toggleFav(this)">🤍</button>
+    </div>
+    <div class="rd-body">
+      <div id="rd-name" class="rd-name"></div>
+      <div class="rd-rating-row" id="rd-stars"></div>
+      <div class="rd-info-row" id="rd-info"></div>
+      <div class="rd-tabs">
+        <div class="rd-tab on" onclick="rdTab(this,'menu')">Menú</div>
+        <div class="rd-tab" onclick="rdTab(this,'info')">Info</div>
+        <div class="rd-tab" onclick="rdTab(this,'reviews')">Reseñas</div>
+      </div>
+      <div id="rd-content"></div>
+    </div>
+  </div>
+  <div style="position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:430px;padding:1rem 1.1rem;background:var(--white);border-top:1px solid var(--slate100);box-shadow:0 -4px 16px rgba(0,0,0,.06);">
+    <button class="btn btn-green btn-full" onclick="toast('¡Redirigiendo al menú de pedido!')">🛒 Hacer pedido</button>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     COMPARADOR
+════════════════════════════════════════ -->
+<div class="screen" id="s-comparador">
+  <div class="topbar">
+    <button class="icon-btn" onclick="goBack()">←</button>
+    <span style="font-weight:700;font-size:1rem">⚖️ Comparador</span>
+    <div style="width:38px"></div>
+  </div>
+  <div class="scroll-body" style="padding-top:0">
+    <div style="padding:1.1rem">
+      <p style="font-size:.82rem;color:var(--slate500);margin-bottom:1rem">Selecciona dos platos para comparar precios y valor nutricional</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:.625rem;margin-bottom:1.25rem" id="cmp-selector">
+        <div class="food-item" style="flex-direction:column;text-align:center;border:2px solid var(--g400);background:var(--g50)" onclick="toast('Cambiando selección...')">
+          <div class="food-img" style="margin:0 auto .4rem">🥗</div>
+          <div class="food-name" style="font-size:.8rem">Ensalada Ejecutiva</div>
+          <div class="food-place">Cafetería Central</div>
+        </div>
+        <div class="food-item" style="flex-direction:column;text-align:center;border:2px solid var(--slate200)" onclick="toast('Cambiando selección...')">
+          <div class="food-img" style="margin:0 auto .4rem">🍱</div>
+          <div class="food-name" style="font-size:.8rem">Bowl Vegano</div>
+          <div class="food-place">Verde Vida</div>
+        </div>
+      </div>
+      <div class="cmp-table">
+        <div class="cmp-row hdr"><div class="cmp-cell lbl">Criterio</div><div class="cmp-cell">🥗 Ensalada</div><div class="cmp-cell">🍱 Bowl Vegano</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Precio</div><div class="cmp-cell best">$2.50</div><div class="cmp-cell">$3.20</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Calorías</div><div class="cmp-cell best">380 cal</div><div class="cmp-cell">420 cal</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Proteína</div><div class="cmp-cell">18 g</div><div class="cmp-cell best">24 g</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Carbos</div><div class="cmp-cell best">32 g</div><div class="cmp-cell">45 g</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Tiempo</div><div class="cmp-cell best">5 min</div><div class="cmp-cell">10 min</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Calificación</div><div class="cmp-cell best">⭐ 4.8</div><div class="cmp-cell">⭐ 4.6</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Vegetariana</div><div class="cmp-cell best">✅</div><div class="cmp-cell best">✅</div></div>
+        <div class="cmp-row"><div class="cmp-cell lbl">Sin gluten</div><div class="cmp-cell">❌</div><div class="cmp-cell best">✅</div></div>
+      </div>
+      <div class="winner-box">🏆 <strong>Recomendación IA:</strong> La Ensalada Ejecutiva tiene mejor precio, menor tiempo de espera y mayor calificación. ¡Ideal para tu presupuesto de hoy!</div>
+      <button class="btn btn-green btn-full" style="margin-top:1rem" onclick="toast('¡Pedido iniciado: Ensalada Ejecutiva!')">🛒 Pedir Ensalada Ejecutiva – $2.50</button>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="bnav-item" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════
+     PROMOCIONES
+════════════════════════════════════════ -->
+<div class="screen" id="s-promociones">
+  <div class="topbar">
+    <span class="topbar-logo">Uni<em>Food</em></span>
+    <div class="topbar-actions">
+      <button class="icon-btn" onclick="toast('Filtros de promociones')">🎯</button>
+    </div>
+  </div>
+  <div class="countdown-bar">
+    <div class="cd-text">⏰ Ofertas del día terminan en</div>
+    <div class="cd-time" id="countdown">02:45:30</div>
+  </div>
+  <div class="scroll-body" style="padding-top:0">
+    <div style="padding:1.1rem">
+      <div class="promo-card">
+        <div class="promo-img" style="background:#fff7ed">🥤<div class="promo-badge">2×1</div></div>
+        <div class="promo-body">
+          <div class="promo-title">2×1 en Jugos Naturales</div>
+          <div class="promo-desc">Todos los jugos del día — fresa, mango, maracuyá. Solo en Jugos & Más hasta las 3 p.m.</div>
+          <div class="promo-footer">
+            <div><div class="promo-price">$1.10</div><div class="promo-old">antes $2.10</div></div>
+            <button class="btn btn-green btn-sm" onclick="toast('✅ Jugo agregado al pedido!')">+ Agregar</button>
+          </div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-img" style="background:#f0fdf4">🥗<div class="promo-badge green">−30%</div></div>
+        <div class="promo-body">
+          <div class="promo-title">Ensalada del Chef</div>
+          <div class="promo-desc">Pollo a la plancha, aguacate, tomate cherry y aderezo de limón. 100% fresca. Cafetería Central.</div>
+          <div class="promo-footer">
+            <div><div class="promo-price">$2.20</div><div class="promo-old">antes $3.20</div></div>
+            <button class="btn btn-green btn-sm" onclick="toast('✅ Ensalada agregada!')">+ Agregar</button>
+          </div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-img" style="background:#fef9c3">🍱<div class="promo-badge">Combo</div></div>
+        <div class="promo-body">
+          <div class="promo-title">Combo Universitario</div>
+          <div class="promo-desc">Plato del día + bebida + postre. La opción perfecta para rendir al máximo en clases.</div>
+          <div class="promo-footer">
+            <div><div class="promo-price">$3.00</div><div class="promo-old">antes $4.20</div></div>
+            <button class="btn btn-green btn-sm" onclick="toast('✅ Combo agregado!')">+ Agregar</button>
+          </div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-img" style="background:#fce7f3">🍫<div class="promo-badge green">Gratis</div></div>
+        <div class="promo-body">
+          <div class="promo-title">Postre gratis con tu compra</div>
+          <div class="promo-desc">Pide cualquier plato mayor a $2.60 y llévate un brownie de chocolate sin costo adicional.</div>
+          <div class="promo-footer">
+            <div><div class="promo-price">Gratis</div><div class="promo-old">con compra +$2.60</div></div>
+            <button class="btn btn-orange btn-sm" onclick="toast('🎉 Oferta activada!')">Activar</button>
+          </div>
+        </div>
+      </div>
+      <div class="promo-card">
+        <div class="promo-img" style="background:#eff6ff">🥙<div class="promo-badge">Bebida gratis</div></div>
+        <div class="promo-body">
+          <div class="promo-title">Wrap + Bebida gratis</div>
+          <div class="promo-desc">Pide cualquier wrap en Food Court y llévate un agua o jugo de 250ml sin costo.</div>
+          <div class="promo-footer">
+            <div><div class="promo-price">$2.80</div><div class="promo-old">antes $3.60</div></div>
+            <button class="btn btn-green btn-sm" onclick="toast('✅ Wrap agregado!')">+ Agregar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="bnav-item" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════
+     PEDIDOS
+════════════════════════════════════════ -->
+<div class="screen" id="s-pedidos">
+  <div class="topbar">
+    <span class="topbar-logo">Uni<em>Food</em></span>
+    <button class="icon-btn" onclick="toast('Historial completo')">📋</button>
+  </div>
+  <div class="scroll-body" style="padding-top:0">
+    <div style="padding:1.1rem">
+      <!-- Pedido activo -->
+      <div class="sec-title" style="margin-bottom:.875rem">Pedido en curso 🔥</div>
+      <div class="order-status-card">
+        <div class="osc-header">
+          <div><div class="osc-num">#2847 · Cafetería Central</div><div class="osc-name">Ensalada Ejecutiva + Jugo natural</div></div>
+          <div class="osc-status s-prep">En preparación</div>
+        </div>
+        <!-- Progress -->
+        <div class="prog-steps">
+          <div class="ps-step"><div class="ps-circle done">✓</div><div class="ps-label done">Recibido</div></div>
+          <div class="ps-line done"></div>
+          <div class="ps-step"><div class="ps-circle done">✓</div><div class="ps-label done">Preparando</div></div>
+          <div class="ps-line done"></div>
+          <div class="ps-step"><div class="ps-circle active">🔥</div><div class="ps-label active">Casi listo</div></div>
+          <div class="ps-line"></div>
+          <div class="ps-step"><div class="ps-circle pending">4</div><div class="ps-label">Listo ✅</div></div>
+        </div>
+        <div class="osc-eta">⏱ Listo en aprox. <strong style="margin-left:.25rem">5 min</strong> &nbsp;·&nbsp; Para llevar &nbsp;·&nbsp; $3.60</div>
+      </div>
+
+      <!-- Pedido anticipado -->
+      <div class="sec-title" style="margin-bottom:.875rem;margin-top:.25rem">Nuevo pedido anticipado 🕐</div>
+      <div class="time-pick-card">
+        <div class="tp-title">Restaurante</div>
+        <div style="display:flex;gap:.5rem;margin-bottom:.875rem;overflow-x:auto;scrollbar-width:none;">
+          <button class="f-chip on">🏫 Cafetería</button>
+          <button class="f-chip" onclick="setFilter(this,'V')">🌿 Verde Vida</button>
+          <button class="f-chip" onclick="setFilter(this,'F')">🍕 Food Court</button>
+          <button class="f-chip" onclick="setFilter(this,'J')">🥤 Jugos</button>
+        </div>
+        <div class="tp-title">¿A qué hora recoges?</div>
+        <div class="time-slots">
+          <button class="t-slot" onclick="selTime(this)">12:00</button>
+          <button class="t-slot on" onclick="selTime(this)">12:30</button>
+          <button class="t-slot" onclick="selTime(this)">13:00</button>
+          <button class="t-slot" onclick="selTime(this)">13:30</button>
+          <button class="t-slot" onclick="selTime(this)">14:00</button>
+          <button class="t-slot" onclick="selTime(this)">14:30</button>
+        </div>
+      </div>
+      <button class="btn btn-green btn-full" onclick="toast('✅ Pedido anticipado para 12:30 confirmado!')">📦 Confirmar pedido anticipado</button>
+
+      <!-- Métodos de pago -->
+      <div class="sec-title" style="margin:.875rem 0 .625rem">Método de pago 💳</div>
+      <div class="pay-methods" style="padding:0">
+        <div class="pay-card on" onclick="selPay(this)"><span class="pay-icon">💳</span><span class="pay-name">Visa ····4823</span></div>
+        <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">💳</span><span class="pay-name">Mastercard</span></div>
+        <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">🍎</span><span class="pay-name">Apple Pay</span></div>
+        <div class="pay-card" onclick="selPay(this)"><span style="font-size:1.2rem">G</span><span class="pay-name">Google Pay</span></div>
+        <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">💵</span><span class="pay-name">Efectivo</span></div>
+        <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">📱</span><span class="pay-name">QR / PSE</span></div>
+      </div>
+
+      <!-- Historial -->
+      <div class="sec-title" style="margin:.875rem 0 .625rem">Historial reciente</div>
+      <div class="order-hist-card">
+        <div class="ohc-top">
+          <div><div class="ohc-name">Bowl Vegano + Agua</div><div class="ohc-meta">Verde Vida · Ayer · ✅ Entregado</div></div>
+          <div class="osc-status s-done">Entregado</div>
+        </div>
+        <div class="ohc-foot"><span class="ohc-pts">+26 UniPoints</span><span class="ohc-total">$3.40</span></div>
+      </div>
+      <div class="order-hist-card">
+        <div class="ohc-top">
+          <div><div class="ohc-name">Jugo de mango ×2</div><div class="ohc-meta">Jugos & Más · Hace 2 días · ✅ Entregado</div></div>
+          <div class="osc-status s-done">Entregado</div>
+        </div>
+        <div class="ohc-foot"><span class="ohc-pts">+8 UniPoints</span><span class="ohc-total">$2.10</span></div>
+      </div>
+      <div class="order-hist-card">
+        <div class="ohc-top">
+          <div><div class="ohc-name">Combo Universitario</div><div class="ohc-meta">Cafetería Central · Hace 3 días · ✅ Entregado</div></div>
+          <div class="osc-status s-done">Entregado</div>
+        </div>
+        <div class="ohc-foot"><span class="ohc-pts">+30 UniPoints</span><span class="ohc-total">$3.00</span></div>
+      </div>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="bnav-item" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item on" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════
+     PUNTOS
+════════════════════════════════════════ -->
+<div class="screen" id="s-puntos">
+  <div class="topbar">
+    <button class="icon-btn" onclick="goBack()">←</button>
+    <span style="font-weight:700;font-size:1rem">🏆 UniPoints</span>
+    <div style="width:38px"></div>
+  </div>
+  <div class="scroll-body" style="padding-top:0">
+    <div class="pts-hero">
+      <div class="pts-big">1,240</div>
+      <div class="pts-sub">UniPoints acumulados</div>
+      <div class="pts-level">⭐ Nivel: Estudiante Dorado</div>
+    </div>
+    <div class="pts-prog-card">
+      <div class="ppc-row"><span>Nivel Dorado</span><span>Platino – 1,500 pts</span></div>
+      <div class="ppc-bar"><div class="ppc-fill" style="width:82%"></div></div>
+      <div class="ppc-note">Te faltan <strong>260 pts</strong> para alcanzar el nivel Platino 🚀</div>
+    </div>
+
+    <div style="padding:0 1.1rem .5rem"><div class="sec-title">Beneficios por nivel</div></div>
+    <div class="benefit-row" style="padding:0 1.1rem .75rem">
+      <div class="benefit-card" onclick="toast('🥤 Canjeando jugo gratis!')"><div class="bc-emoji">🥤</div><div class="bc-name">Jugo gratis</div><div class="bc-pts">200 pts</div></div>
+      <div class="benefit-card" onclick="toast('🏷️ Descuento 15% activado!')"><div class="bc-emoji">🏷️</div><div class="bc-name">Desc. 15%</div><div class="bc-pts">350 pts</div></div>
+      <div class="benefit-card" onclick="toast('🍫 Postre gratis canjeado!')"><div class="bc-emoji">🍫</div><div class="bc-name">Postre gratis</div><div class="bc-pts">500 pts</div></div>
+      <div class="benefit-card bc-locked" onclick="toast('Necesitas 600 pts más')"><div class="bc-lock-icon">🔒</div><div class="bc-emoji">🍱</div><div class="bc-name">Almuerzo</div><div class="bc-pts">1,000 pts</div></div>
+      <div class="benefit-card" onclick="toast('🛵 Envío gratis activado!')"><div class="bc-emoji">🛵</div><div class="bc-name">Envío gratis</div><div class="bc-pts">150 pts</div></div>
+      <div class="benefit-card bc-locked" onclick="toast('Sigue acumulando...')"><div class="bc-lock-icon">🔒</div><div class="bc-emoji">🎓</div><div class="bc-name">Semana gratis</div><div class="bc-pts">2,000 pts</div></div>
+    </div>
+
+    <div style="padding:0 1.1rem .5rem"><div class="sec-title">Historial de puntos</div></div>
+    <div>
+      <div class="pts-hist-item"><div class="phi-icon" style="background:var(--g50)">🥗</div><div class="phi-info"><div class="phi-desc">Ensalada Ejecutiva</div><div class="phi-date">Hoy · Cafetería Central</div></div><div class="phi-pts gain">+20</div></div>
+      <div class="pts-hist-item"><div class="phi-icon" style="background:var(--o50)">🏷️</div><div class="phi-info"><div class="phi-desc">Descuento 10% canjeado</div><div class="phi-date">Ayer</div></div><div class="phi-pts spend">−350</div></div>
+      <div class="pts-hist-item"><div class="phi-icon" style="background:var(--g50)">🍱</div><div class="phi-info"><div class="phi-desc">Bowl Vegano</div><div class="phi-date">Hace 2 días · Verde Vida</div></div><div class="phi-pts gain">+26</div></div>
+      <div class="pts-hist-item"><div class="phi-icon" style="background:var(--b50)">🎁</div><div class="phi-info"><div class="phi-desc">Bono bienvenida UniFood</div><div class="phi-date">Esta semana</div></div><div class="phi-pts gain">+100</div></div>
+      <div class="pts-hist-item"><div class="phi-icon" style="background:var(--g50)">🥤</div><div class="phi-info"><div class="phi-desc">Jugo de mango ×2</div><div class="phi-date">Hace 3 días · Jugos & Más</div></div><div class="phi-pts gain">+8</div></div>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="bnav-item" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<!-- ════════════════════════════════════════
+     NOTIFICATIONS
+════════════════════════════════════════ -->
+<div class="screen" id="s-notifs">
+  <div class="topbar">
+    <button class="icon-btn" onclick="goBack()">←</button>
+    <span style="font-weight:700;font-size:1rem">🔔 Notificaciones</span>
+    <button class="icon-btn" onclick="toast('Marcar todas como leídas')">✓</button>
+  </div>
+  <div class="scroll-body" style="padding-top:0;padding-bottom:20px">
+    <div style="padding:.75rem 1.1rem;font-size:.72rem;color:var(--slate400);font-weight:600;background:var(--slate50);border-bottom:1px solid var(--slate100)">HOY</div>
+    <div class="notif-item unread" onclick="toast('Yendo a tu pedido #2847')">
+      <div class="ni-icon" style="background:var(--g50)">✅</div>
+      <div class="ni-body"><div class="ni-title">¡Tu pedido está listo!</div><div class="ni-text">Tu Ensalada Ejecutiva en Cafetería Central ya está lista para recoger. Tienes 15 min antes de que se enfríe.</div><div class="ni-time">Hace 2 min</div></div>
+      <div class="ni-dot"></div>
+    </div>
+    <div class="notif-item unread" onclick="goTo('puntos')">
+      <div class="ni-icon" style="background:#eff6ff">🏆</div>
+      <div class="ni-body"><div class="ni-title">¡Ganaste 20 UniPoints!</div><div class="ni-text">Tu compra de hoy te dio 20 UniPoints. Te faltan 260 para subir al nivel Platino.</div><div class="ni-time">Hace 5 min</div></div>
+      <div class="ni-dot"></div>
+    </div>
+    <div class="notif-item unread" onclick="goTo('promociones')">
+      <div class="ni-icon" style="background:var(--o50)">🎉</div>
+      <div class="ni-body"><div class="ni-title">Nueva promoción disponible</div><div class="ni-text">2×1 en jugos naturales hasta las 3 p.m. de hoy. ¡Solo en Jugos & Más!</div><div class="ni-time">Hace 20 min</div></div>
+      <div class="ni-dot"></div>
+    </div>
+    <div style="padding:.75rem 1.1rem;font-size:.72rem;color:var(--slate400);font-weight:600;background:var(--slate50);border-bottom:1px solid var(--slate100);border-top:1px solid var(--slate100)">AYER</div>
+    <div class="notif-item" onclick="toast('Detalle del pedido...')">
+      <div class="ni-icon" style="background:var(--slate50)">📦</div>
+      <div class="ni-body"><div class="ni-title">Pedido #2841 entregado</div><div class="ni-text">Tu Bowl Vegano de Verde Vida fue entregado. ¡Esperamos que lo hayas disfrutado! 🌿</div><div class="ni-time">Ayer 1:32 p.m.</div></div>
+    </div>
+    <div class="notif-item" onclick="goTo('puntos')">
+      <div class="ni-icon" style="background:var(--g50)">🎁</div>
+      <div class="ni-body"><div class="ni-title">Bono de bienvenida acreditado</div><div class="ni-text">100 UniPoints han sido agregados a tu cuenta como bono de bienvenida. ¡Empieza a canjearlos!</div><div class="ni-time">Ayer 10:00 a.m.</div></div>
+    </div>
+    <div class="notif-item" onclick="toast('Ver restaurantes favoritos')">
+      <div class="ni-icon" style="background:var(--o50)">❤️</div>
+      <div class="ni-body"><div class="ni-title">Cafetería Central tiene nueva oferta</div><div class="ni-text">Un restaurante que marcaste como favorito publicó una nueva promo de 30% de descuento.</div><div class="ni-time">Ayer 9:15 a.m.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════════
+     PERFIL
+════════════════════════════════════════ -->
+<div class="screen" id="s-perfil">
+  <div class="scroll-body">
+    <div class="prof-hero">
+      <div class="prof-avatar" onclick="toast('Cambiar foto de perfil')">🧑‍🎓</div>
+      <div class="prof-name">Sofía Martínez</div>
+      <div class="prof-uni">Universidad del Valle · Ingeniería de Sistemas</div>
+      <div class="prof-level">⭐ Estudiante Dorado · 1,240 pts</div>
+    </div>
+    <div class="prof-stats">
+      <div class="pstat"><div class="pstat-val">47</div><div class="pstat-lbl">Pedidos</div></div>
+      <div class="pstat"><div class="pstat-val">1,240</div><div class="pstat-lbl">UniPoints</div></div>
+      <div class="pstat"><div class="pstat-val">$32</div><div class="pstat-lbl">Ahorrado</div></div>
+    </div>
+
+    <div style="padding:0 1.1rem .5rem"><div class="sec-title">Mi cuenta</div></div>
+    <div class="menu-group">
+      <div class="mi" onclick="toast('Editar perfil')"><div class="mi-icon" style="background:var(--g50)">✏️</div><div class="mi-text">Editar información</div><div class="mi-arrow">›</div></div>
+      <div class="mi" onclick="toast('Preferencias alimenticias')"><div class="mi-icon" style="background:var(--g50)">🥦</div><div class="mi-text">Preferencias alimenticias</div><div class="mi-arrow">›</div></div>
+      <div class="mi" onclick="toast('Presupuesto diario')"><div class="mi-icon" style="background:var(--o50)">💰</div><div class="mi-text">Presupuesto diario</div><div class="mi-arrow">›</div></div>
+    </div>
+
+    <div style="padding:0 1.1rem .5rem"><div class="sec-title">Métodos de pago</div></div>
+    <div class="pay-methods">
+      <div class="pay-card on" onclick="selPay(this)"><span class="pay-icon">💳</span><span class="pay-name">Visa ····4823</span></div>
+      <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">💳</span><span class="pay-name">Mastercard</span></div>
+      <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">🍎</span><span class="pay-name">Apple Pay</span></div>
+      <div class="pay-card" onclick="selPay(this)"><span style="font-size:1.2rem;font-weight:700;color:#4285f4">G</span><span class="pay-name">Google Pay</span></div>
+      <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">💵</span><span class="pay-name">Efectivo</span></div>
+      <div class="pay-card" onclick="selPay(this)"><span class="pay-icon">📱</span><span class="pay-name">QR / PSE</span></div>
+    </div>
+
+    <div style="padding:.875rem 1.1rem .5rem"><div class="sec-title">Favoritos ❤️</div></div>
+    <div class="menu-group">
+      <div class="mi" onclick="openRest(0)"><div class="mi-icon" style="background:#f0fdf4">🏫</div><div class="mi-text">Cafetería Central</div><div class="mi-arrow">›</div></div>
+      <div class="mi" onclick="openRest(3)"><div class="mi-icon" style="background:#fef9c3">🥤</div><div class="mi-text">Jugos & Más</div><div class="mi-arrow">›</div></div>
+    </div>
+
+    <div style="padding:.875rem 1.1rem .5rem"><div class="sec-title">Configuración</div></div>
+    <div class="menu-group">
+      <div class="mi" onclick="goTo('puntos')"><div class="mi-icon" style="background:#eff6ff">🏆</div><div class="mi-text">Mis UniPoints</div><div class="mi-arrow">›</div></div>
+      <div class="mi" onclick="goTo('notifs')"><div class="mi-icon" style="background:var(--o50)">🔔</div><div class="mi-text">Notificaciones</div><div class="mi-arrow">›</div></div>
+      <div class="mi" onclick="goTo('promociones')"><div class="mi-icon" style="background:var(--o50)">🎉</div><div class="mi-text">Promociones guardadas</div><div class="mi-arrow">›</div></div>
+      <div class="mi" onclick="toast('UniFood v2.0 · Proyecto universitario')"><div class="mi-icon" style="background:var(--slate100)">ℹ️</div><div class="mi-text">Acerca de UniFood</div><div class="mi-arrow">›</div></div>
+    </div>
+
+    <div style="padding:0 1.1rem 2rem">
+      <button class="btn btn-full" style="background:var(--slate100);color:#dc2626;font-size:.9rem;margin-top:.25rem" onclick="doLogout()">🚪 Cerrar sesión</button>
+    </div>
+  </div>
+  <nav class="bnav">
+    <button class="bnav-item" onclick="goTo('home')"><div class="bnav-icon">🏠</div>Inicio</button>
+    <button class="bnav-item" onclick="goTo('buscar')"><div class="bnav-icon">🔍</div>Buscar</button>
+    <button class="bnav-item" onclick="goTo('mapa')"><div class="bnav-icon">📍</div>Mapa</button>
+    <button class="bnav-item" onclick="goTo('pedidos')"><div class="bnav-icon">📦</div>Pedidos</button>
+    <button class="bnav-item on" onclick="goTo('perfil')"><div class="bnav-icon">👤</div>Perfil</button>
+  </nav>
+</div>
+
+<script>
+// ── DATA ──
+const FOODS = [
+  {e:'🥗',n:'Ensalada Ejecutiva',p:'Cafetería Central',price:'$2.50',tags:['Saludable','Vegetariana'],cal:380,prot:18},
+  {e:'🍱',n:'Bowl Vegano del Chef',p:'Verde Vida',price:'$3.20',tags:['Vegana','Alta proteína','Sin gluten'],cal:420,prot:24},
+  {e:'🍛',n:'Plato ejecutivo del día',p:'Cafetería Central',price:'$2.40',tags:['Económico'],cal:550,prot:28},
+  {e:'🥙',n:'Wrap de pollo & aguacate',p:'Food Court',price:'$2.80',tags:['Alta proteína'],cal:490,prot:32},
+  {e:'🥤',n:'Jugo natural 500 ml',p:'Jugos & Más',price:'$1.10',tags:['Saludable','Económico'],cal:120,prot:2},
+  {e:'🍲',n:'Sopa casera del día',p:'Cafetería Central',price:'$1.75',tags:['Económico','Sin gluten'],cal:210,prot:8},
+  {e:'🫐',n:'Bowl de frutas tropicales',p:'Verde Vida',price:'$1.85',tags:['Saludable','Vegana'],cal:180,prot:4},
+  {e:'🌯',n:'Burrito vegano integral',p:'Food Court',price:'$2.90',tags:['Vegana','Alta proteína'],cal:460,prot:22},
+  {e:'🥚',n:'Desayuno completo',p:'Cafetería Central',price:'$2.25',tags:['Económico','Alta proteína'],cal:380,prot:20},
+  {e:'🍵',n:'Té de hierbas aromáticas',p:'Jugos & Más',price:'$0.80',tags:['Saludable','Económico'],cal:5,prot:0},
+  {e:'🥗',n:'Ensalada César vegana',p:'Verde Vida',price:'$2.60',tags:['Vegana','Sin gluten'],cal:310,prot:12},
+  {e:'🍝',n:'Pasta integral proteica',p:'Food Court',price:'$3.10',tags:['Alta proteína'],cal:510,prot:30},
+];
+
+const RESTS = [
+  {e:'🏫',n:'Cafetería Central',bg:'#f0fdf4',rating:4.8,reviews:152,dist:'420 m',walk:'5 min',open:'7:00 – 18:00',addr:'Edificio principal, Piso 1',prep:'8 min',range:'$1.60–$3.20',
+   menu:[{e:'🥗',n:'Ensalada Ejecutiva',d:'Lechuga, pollo, aguacate, tomate y aderezo de limón',price:'$2.50',cal:380,prot:18,carb:22,fat:14},
+         {e:'🍛',n:'Plato ejecutivo',d:'Arroz, fríjoles, carne, plátano y ensalada',price:'$2.40',cal:550,prot:28,carb:60,fat:18},
+         {e:'🍲',n:'Sopa del día',d:'Receta casera, varía cada día. Sin gluten.',price:'$1.75',cal:210,prot:8,carb:30,fat:6},
+         {e:'🥚',n:'Desayuno completo',d:'Huevo, arepa, jugo y café. Disponible hasta 10 a.m.',price:'$2.25',cal:380,prot:20,carb:35,fat:14}],
+   revs:[{av:'👩',n:'Laura T.',r:5,t:'La ensalada ejecutiva es mi favorita, siempre fresca y generosa. El personal muy amable 😊',d:'Hace 2 días'},
+         {av:'👨',n:'Carlos M.',r:4,t:'Buena relación calidad-precio. El plato ejecutivo es contundente para aguantar toda la tarde de clase.',d:'Hace 1 semana'},
+         {av:'👩',n:'Valentina R.',r:5,t:'¡El mejor desayuno de la universidad! La arepa está siempre perfecta 🔥',d:'Hace 10 días'}]},
+  {e:'🌿',n:'Verde Vida',bg:'#f0fdf4',rating:4.6,reviews:89,dist:'280 m',walk:'3 min',open:'8:00 – 20:00',addr:'Bloque C, Piso 2',prep:'10 min',range:'$1.85–$3.90',
+   menu:[{e:'🍱',n:'Bowl Vegano del Chef',d:'Quinoa, garbanzos, brócoli, zanahoria y tahini',price:'$3.20',cal:420,prot:24,carb:45,fat:16},
+         {e:'🫐',n:'Bowl de frutas tropicales',d:'Mango, fresa, maracuyá, kiwi y granola casera',price:'$1.85',cal:180,prot:4,carb:40,fat:3},
+         {e:'🌯',n:'Burrito vegano',d:'Fríjoles negros, arroz integral, pico de gallo y aguacate',price:'$2.90',cal:460,prot:22,carb:52,fat:14},
+         {e:'🥗',n:'Ensalada César vegana',d:'Lechuga romana, crutones integrales y aderezo vegano',price:'$2.60',cal:310,prot:12,carb:28,fat:18}],
+   revs:[{av:'👨',n:'Andrés P.',r:5,t:'El bowl vegano es increíble, me ayuda a mantener energía toda la tarde sin pesarme. Lo pido cada semana.',d:'Hace 3 días'},
+         {av:'👩',n:'Mariana L.',r:4,t:'Muy buena opción para quienes buscamos comida sin gluten. Los jugos de fruta están deliciosos.',d:'Hace 2 semanas'}]},
+  {e:'🍕',n:'Food Court Bloque A',bg:'#eff6ff',rating:4.4,reviews:204,dist:'650 m',walk:'8 min',open:'9:00 – 19:00',addr:'Bloque A, Planta baja',prep:'15 min',range:'$2.10–$4.70',
+   menu:[{e:'🥙',n:'Wrap de pollo & aguacate',d:'Tortilla integral, pollo grillado, aguacate, tomate y lechuga',price:'$2.80',cal:490,prot:32,carb:38,fat:20},
+         {e:'🍝',n:'Pasta integral proteica',d:'Espagueti integral, pollo y salsa boloñesa casera',price:'$3.10',cal:510,prot:30,carb:55,fat:16},
+         {e:'🌯',n:'Burrito XL',d:'Doble porción de proteína, arroz, fríjoles y queso',price:'$3.80',cal:620,prot:40,carb:58,fat:24}],
+   revs:[{av:'👩',n:'Catalina B.',r:4,t:'El wrap de pollo es enorme y muy rico. A veces la espera es un poco larga pero vale la pena.',d:'Hace 5 días'},
+         {av:'👨',n:'Felipe S.',r:5,t:'La pasta proteica es perfecta después del gym. Buena porción y precio razonable 💪',d:'Hace 1 semana'}]},
+  {e:'🥤',n:'Jugos & Más',bg:'#fef9c3',rating:4.7,reviews:311,dist:'180 m',walk:'2 min',open:'7:00 – 17:00',addr:'Bloque B, Piso 1',prep:'5 min',range:'$0.80–$2.10',
+   menu:[{e:'🥤',n:'Jugo natural 500 ml',d:'Fresa, mango, maracuyá, lulo o mora. Sin azúcar añadida.',price:'$1.10',cal:120,prot:2,carb:28,fat:0},
+         {e:'🍵',n:'Té de hierbas aromáticas',d:'Manzanilla, menta o yerbabuena. Relajante y natural.',price:'$0.80',cal:5,prot:0,carb:1,fat:0},
+         {e:'🥛',n:'Batido proteico',d:'Leche de almendras, banano, proteína vegetal y cacao',price:'$2.10',cal:280,prot:22,carb:32,fat:8}],
+   revs:[{av:'👩',n:'Daniela F.',r:5,t:'El mejor jugo de maracuyá de toda la uni. ¡Siempre fresco y natural! Lo recomiendo 100%.',d:'Ayer'},
+         {av:'👨',n:'Sebastián R.',r:5,t:'Los batidos proteicos son perfectos para después de hacer deporte. Precio muy accesible.',d:'Hace 3 días'},
+         {av:'👩',n:'Natalia G.',r:4,t:'Excelente servicio, muy rápido. A veces no tienen todos los sabores disponibles pero la calidad es top.',d:'Hace 1 semana'}]},
+];
+
+let curFilter='Todos', prevScreen='home', curRest=0, rdCurTab='menu';
+
+// ── NAVIGATION ──
+const screenMap={login:'s-login',home:'s-home',buscar:'s-buscar',mapa:'s-mapa',rest:'s-rest',comparador:'s-comparador',promociones:'s-promociones',pedidos:'s-pedidos',puntos:'s-puntos',notifs:'s-notifs',perfil:'s-perfil'};
+function goTo(k){
+  const prev=document.querySelector('.screen.active');
+  if(prev) prevScreen=Object.entries(screenMap).find(([,v])=>v===prev.id)?.[0]||'home';
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(screenMap[k]);
+  if(el){el.classList.add('active');try{el.querySelector('.scroll-body')?.scrollTo(0,0);}catch(e){}}
+  if(k==='buscar'){renderFoods('');}
+}
+function goBack(){goTo(prevScreen==='rest'?'home':prevScreen);}
+function openRest(i){curRest=i;rdCurTab='menu';renderRest();goTo('rest');}
+
+// ── REST DETAIL ──
+function renderRest(){
+  const r=RESTS[curRest];
+  const hero=document.getElementById('rd-hero');
+  hero.style.background=`linear-gradient(135deg,${r.bg},${r.bg}dd)`;
+  hero.querySelector(':not(.rd-back):not(.rd-fav)')||hero.insertAdjacentHTML('beforeend',`<span id="rd-emoji" style="font-size:5rem"></span>`);
+  document.getElementById('rd-emoji').textContent=r.e;
+  document.getElementById('rd-name').textContent=r.n;
+  document.getElementById('rd-stars').innerHTML=`
+    <div class="stars">${'⭐'.repeat(Math.floor(r.rating))}</div>
+    <span class="rd-rating-num">${r.rating}</span>
+    <span class="rd-reviews">(${r.reviews} opiniones)</span>`;
+  document.getElementById('rd-info').innerHTML=`
+    <div class="rd-info-item">⏱ ${r.prep}</div>
+    <div class="rd-info-item">📍 ${r.dist} · ${r.walk}</div>
+    <div class="rd-info-item">🕐 ${r.open}</div>`;
+  renderRdContent();
+}
+function rdTab(el,tab){
+  document.querySelectorAll('.rd-tab').forEach(t=>t.classList.remove('on'));
+  el.classList.add('on');rdCurTab=tab;renderRdContent();
+}
+function renderRdContent(){
+  const r=RESTS[curRest];
+  const c=document.getElementById('rd-content');
+  if(rdCurTab==='menu'){
+    c.innerHTML=r.menu.map(m=>`
+      <div class="menu-item-card">
+        <div class="mic-img">${m.e}</div>
+        <div class="mic-info">
+          <div class="mic-name">${m.n}</div>
+          <div class="mic-desc">${m.d}</div>
+          <div class="mic-nutri"><span>🔥 ${m.cal} cal</span><span>💪 ${m.prot}g prot</span><span>🍞 ${m.carb}g carb</span></div>
+        </div>
+        <div class="mic-right">
+          <div class="mic-price">${m.price}</div>
+          <button class="btn btn-green btn-sm" onclick="toast('✅ ${m.n} agregado!')">+ Agregar</button>
+        </div>
+      </div>`).join('');
+  } else if(rdCurTab==='info'){
+    c.innerHTML=`
+      <div style="background:var(--slate50);border-radius:var(--r-md);padding:1rem;margin-bottom:.75rem">
+        <div style="font-size:.82rem;color:var(--slate600);line-height:1.7">
+          <div>📍 <strong>Dirección:</strong> ${r.addr}</div>
+          <div>🕐 <strong>Horario:</strong> ${r.open}</div>
+          <div>⏱ <strong>Prep. estimada:</strong> ${r.prep}</div>
+          <div>🚶 <strong>Distancia:</strong> ${r.dist} (~${r.walk} caminando)</div>
+          <div>💰 <strong>Rango de precios:</strong> ${r.range}</div>
+        </div>
+      </div>
+      <button class="btn btn-outline btn-full" onclick="toast('Abriendo cómo llegar...')">🗺️ Cómo llegar</button>`;
+  } else {
+    c.innerHTML=r.revs.map(rv=>`
+      <div class="review-card">
+        <div class="rev-header">
+          <div class="rev-avatar">${rv.av}</div>
+          <div><div class="rev-name">${rv.n}</div><div class="rev-date">${rv.d}</div></div>
+          <div style="margin-left:auto"><div class="stars sm">${'⭐'.repeat(rv.r)}</div></div>
+        </div>
+        <div class="rev-text">${rv.t}</div>
+      </div>`).join('')+
+    `<button class="btn btn-outline btn-full" style="margin-top:.5rem" onclick="toast('Agregar reseña...')">✏️ Escribir reseña</button>`;
+  }
+}
+
+// ── FOODS ──
+function renderFoods(q=''){
+  const list=document.getElementById('food-list');
+  const cnt=document.getElementById('food-count');
+  if(!list)return;
+  const fq=q.toLowerCase();
+  const res=FOODS.filter(f=>{
+    const mq=!fq||f.n.toLowerCase().includes(fq)||f.p.toLowerCase().includes(fq)||f.tags.some(t=>t.toLowerCase().includes(fq));
+    const mf=curFilter==='Todos'||curFilter==='Abierto ahora'||f.tags.includes(curFilter);
+    return mq&&mf;
+  });
+  if(cnt)cnt.textContent=`${res.length} resultado${res.length!==1?'s':''} encontrado${res.length!==1?'s':''}`;
+  list.innerHTML=res.length?res.map(f=>`
+    <div class="food-item" onclick="toast('Agregando ${f.n} al pedido...')">
+      <div class="food-img">${f.e}</div>
+      <div class="food-info">
+        <div class="food-name">${f.n}</div>
+        <div class="food-place">📍 ${f.p}</div>
+        <div class="food-tags">${f.tags.map(t=>`<span class="chip ${t==='Saludable'||t==='Vegetariana'||t==='Vegana'?'chip-green':t==='Económico'?'chip-orange':t==='Sin gluten'?'chip-blue':'chip-gray'}">${t}</span>`).join('')}</div>
+      </div>
+      <div class="food-right">
+        <div class="food-price">${f.price}</div>
+        <button class="food-add" onclick="event.stopPropagation();toast('✅ ${f.n} agregado!')">+</button>
+      </div>
+    </div>`).join('')
+    :`<div style="text-align:center;padding:2.5rem 1rem;color:var(--slate400)"><div style="font-size:2.5rem;margin-bottom:.75rem">😕</div><div style="font-weight:600">Sin resultados</div><div style="font-size:.82rem;margin-top:.4rem">Prueba con otro filtro o término</div></div>`;
+}
+function setFilter(el,val){
+  document.querySelectorAll('.f-chip').forEach(c=>c.classList.remove('on'));
+  el.classList.add('on');curFilter=val;
+  renderFoods(document.getElementById('sf')?.value||'');
+}
+function filterCat(cat){
+  goTo('buscar');curFilter=cat;
+  setTimeout(()=>{
+    document.querySelectorAll('.f-chip').forEach(c=>{c.classList.toggle('on',c.textContent.trim().includes(cat));});
+    renderFoods('');
+  },50);
+}
+
+// ── AUTH ──
+function doLogin(){
+  const email=document.getElementById('in-email').value;
+  if(!email){toast('Ingresa tu correo institucional');return;}
+  toast('¡Bienvenida, Sofía! 🎉');
+  setTimeout(()=>goTo('home'),800);
+}
+function doLogout(){toast('Hasta pronto 👋');setTimeout(()=>goTo('login'),700);}
+
+// ── TOAST ──
+let _tt;
+function toast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(_tt);_tt=setTimeout(()=>t.classList.remove('show'),2600);
+}
+
+// ── UI HELPERS ──
+function toggleFav(btn){btn.classList.toggle('on');btn.textContent=btn.classList.contains('on')?'❤️':'🤍';toast(btn.classList.contains('on')?'❤️ Agregado a favoritos':'Eliminado de favoritos');}
+function selTime(el){document.querySelectorAll('.t-slot').forEach(b=>b.classList.remove('on'));el.classList.add('on');}
+function selPay(el){document.querySelectorAll('.pay-card').forEach(c=>c.classList.remove('on'));el.classList.add('on');toast('✅ Método de pago seleccionado');}
+
+// ── COUNTDOWN ──
+let secs=9930;
+function tick(){
+  const h=Math.floor(secs/3600),m=Math.floor((secs%3600)/60),s=secs%60;
+  const el=document.getElementById('countdown');
+  if(el)el.textContent=`${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+  if(secs>0)secs--;
+}
+setInterval(tick,1000);tick();
+
+// ── INIT ──
+renderFoods();
+</script>
+</body>
+</html>
